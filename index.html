@@ -5,18 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Unlock Gateway</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Monetag SDK (Teri Zone ID ke saath) -->
+    <script src='//libtl.com/sdk.js' data-zone='10824531' data-sdk='show_10824531'></script>
+    
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
-            user-select: none;
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #0a0a0f;
             min-height: 100vh;
             color: #ffffff;
@@ -59,19 +61,22 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.2s ease;
+            position: relative;
         }
         
         .ad-btn:active {
             transform: scale(0.97);
-            background: linear-gradient(135deg, #2a2a3e, #1a1a2e);
+        }
+        
+        .ad-btn.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
         
         .ad-btn.completed {
             background: linear-gradient(135deg, #0f3b2a, #1a4a35);
             border-color: rgba(56, 239, 125, 0.5);
-            opacity: 0.9;
-            cursor: default;
-            transform: none;
         }
         
         .ad-btn.completed:active {
@@ -96,8 +101,26 @@
             margin-top: 4px;
         }
         
-        .ad-btn.completed .title {
-            color: #38ef7d;
+        .ad-btn .loading-spinner {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #ff4d4d;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: none;
+        }
+        
+        .ad-btn.completed .loading-spinner {
+            display: none;
+        }
+        
+        @keyframes spin {
+            to { transform: translateY(-50%) rotate(360deg); }
         }
         
         .unlock-btn {
@@ -150,6 +173,27 @@
             color: #38ef7d;
         }
         
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            color: #38ef7d;
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: fadeOut 2s ease forwards;
+            pointer-events: none;
+        }
+        
+        @keyframes fadeOut {
+            0% { opacity: 1; bottom: 30px; }
+            70% { opacity: 1; bottom: 30px; }
+            100% { opacity: 0; bottom: 50px; visibility: hidden; }
+        }
+        
         .support-btn {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
@@ -196,120 +240,27 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
         
-        .loading {
-            display: none;
-            text-align: center;
-            margin-top: 20px;
-        }
-        
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: #ff4d4d;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .dialog-overlay {
+        .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.96);
+            background: rgba(0,0,0,0.8);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(5px);
         }
         
-        .dialog-box {
-            background: linear-gradient(135deg, #1a1a2e, #0f0f1a);
-            border-radius: 24px;
-            padding: 25px;
-            max-width: 320px;
-            width: 85%;
-            text-align: center;
-            border: 1px solid rgba(255,77,77,0.3);
-            animation: fadeIn 0.3s ease;
-            position: relative;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        
-        .dialog-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 32px;
-            height: 32px;
-            background: rgba(255,255,255,0.1);
+        .loading-spinner-large {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: #ff4d4d;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 18px;
-            color: #aaa;
-            transition: all 0.2s;
-        }
-        
-        .dialog-close:active {
-            background: rgba(255,255,255,0.2);
-            transform: scale(0.95);
-        }
-        
-        .dialog-box h2 {
-            color: #ff4d4d;
-            margin-bottom: 15px;
-            font-size: 22px;
-            padding-right: 25px;
-        }
-        
-        .dialog-box p {
-            color: #ccc;
-            margin-bottom: 25px;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        
-        .dialog-btn {
-            background: linear-gradient(135deg, #ff416c, #ff4b2b);
-            border: none;
-            padding: 14px 25px;
-            border-radius: 40px;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-        }
-        
-        .dialog-btn:active {
-            transform: scale(0.97);
-        }
-        
-        .join-dialog h2 {
-            color: #ffaa00;
-        }
-        
-        .join-dialog .dialog-btn {
-            background: linear-gradient(135deg, #ffaa00, #ff8800);
-            color: #000;
-        }
-        
-        .maintenance-dialog h2 {
-            color: #ffaa00;
+            animation: spin 0.8s linear infinite;
         }
         
         .hidden {
@@ -323,7 +274,7 @@
     <div class="container">
         
         <div class="disclaimer">
-            ⚠️ 18+ Only | By proceeding, you agree to watch ads to unlock content
+            ⚠️ 18+ Only | Watch ads to unlock content
         </div>
         
         <div class="header">
@@ -335,12 +286,14 @@
             <div class="emoji">🎬</div>
             <div class="title">WATCH AD 1</div>
             <div class="sub">~10 seconds • required</div>
+            <div class="loading-spinner"></div>
         </div>
         
         <div class="ad-btn" id="ad2Btn">
             <div class="emoji">🎬</div>
             <div class="title">WATCH AD 2</div>
             <div class="sub">~10 seconds • required</div>
+            <div class="loading-spinner"></div>
         </div>
         
         <div class="unlock-btn" id="unlockBtn">
@@ -352,20 +305,18 @@
             ⚠️ Complete both ads to unlock
         </div>
         
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p style="margin-top: 10px;">Unlocking content...</p>
-        </div>
-        
         <div class="support-btn" id="supportBtn">
             <div class="title">❓ Having issues? <b>Contact Support</b> ❓</div>
         </div>
         
         <div class="footer">
             <p>🔞 18+ Only | Ads support free content</p>
-            <p>Content expires after access | Be respectful</p>
         </div>
     </div>
+</div>
+
+<div id="loadingOverlay" class="loading-overlay hidden">
+    <div class="loading-spinner-large"></div>
 </div>
 
 <script>
@@ -378,133 +329,44 @@
     
     let ad1Done = false, ad2Done = false;
     let adCount = 2;
+    let loadingAd = false;
     
-    // ========== 🔥 DIRECT CONFIG (No Sheet, No CSV) 🔥 ==========
-    // Yahan tu sab kuch edit kar sakta hai — messages, links, sab kuch!
+    // Monetag Zone ID
+    const ZONE_ID = '10824531';
+    const showAd = window[`show_${ZONE_ID}`];
     
-    const CONFIG = {
-        // Maintenance mode (true = band, false = chalu)
-        maintenance: false,
-        maintenance_message: "🔧 App is under maintenance. Come back in 2 hours!",
-        
-        // Welcome dialog (pehli baar user aaye to dikhega)
-        welcome_title: "🔥 Welcome to Sin Zone! 🔥",
-        welcome_message: "⚠️ Watch 2 ads then click GET CONTENT! No shortcuts. 😈",
-        welcome_button: "I Understand 🔞",
-        
-        // Join channel dialog
-        show_join_dialog: false,
-        join_title: "📢 JOIN OUR CHANNEL! 📢",
-        join_message: "Get exclusive content, updates, and early access! 🔞",
-        join_button_text: "🔞 JOIN NOW 🔞",
-        join_channel_link: "https://t.me/codexmomo",
-        
-        // Notice dialog
-        show_notice: true,
-        notice_title: "📢 NEW UPDATE!",
-        notice_message: "Faster servers added. Enjoy! 🚀",
-        notice_button_text: "Got it! ✅"
-    };
-    // ==============================================================
-    
-    // Shortlinks (Teri ad links)
+    // Shortlinks (Teri ad links for fallback)
     const AD_LINK_1 = "https://developdomicile.com/gig652rgki?key=42f8ca7472c359fa65553c60ec6d14ca";
     const AD_LINK_2 = "https://developdomicile.com/g6f829ibdp?key=b4c0bd42b66bdffb9a35ea29aa3d2540";
     const SUPPORT_BOT = "https://t.me/SinAccessHelpBot";
     
-    const mainContent = document.getElementById('mainContent');
+    const ad1Btn = document.getElementById('ad1Btn');
+    const ad2Btn = document.getElementById('ad2Btn');
+    const unlockBtn = document.getElementById('unlockBtn');
+    const statusMsg = document.getElementById('statusMsg');
+    const loadingOverlay = document.getElementById('loadingOverlay');
     
-    // ========== DIALOG FUNCTIONS ==========
-    function showWelcomeDialog() {
-        const dialog = document.createElement('div');
-        dialog.className = 'dialog-overlay';
-        dialog.innerHTML = `
-            <div class="dialog-box">
-                <div class="dialog-close">✕</div>
-                <h2>${CONFIG.welcome_title}</h2>
-                <p>${CONFIG.welcome_message}</p>
-                <button class="dialog-btn">${CONFIG.welcome_button}</button>
-            </div>
-        `;
-        document.body.appendChild(dialog);
-        
-        dialog.querySelector('.dialog-close').onclick = () => dialog.remove();
-        dialog.querySelector('.dialog-btn').onclick = () => dialog.remove();
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
     }
     
-    function showJoinDialog() {
-        const dialog = document.createElement('div');
-        dialog.className = 'dialog-overlay';
-        dialog.innerHTML = `
-            <div class="dialog-box join-dialog">
-                <div class="dialog-close">✕</div>
-                <h2>${CONFIG.join_title}</h2>
-                <p>${CONFIG.join_message}</p>
-                <button class="dialog-btn">${CONFIG.join_button_text}</button>
-            </div>
-        `;
-        document.body.appendChild(dialog);
-        
-        dialog.querySelector('.dialog-close').onclick = () => dialog.remove();
-        dialog.querySelector('.dialog-btn').onclick = () => {
-            tg.openLink(CONFIG.join_channel_link);
-            dialog.remove();
-        };
-    }
-    
-    function showNoticeDialog() {
-        const dialog = document.createElement('div');
-        dialog.className = 'dialog-overlay';
-        dialog.innerHTML = `
-            <div class="dialog-box">
-                <div class="dialog-close">✕</div>
-                <h2>${CONFIG.notice_title}</h2>
-                <p>${CONFIG.notice_message}</p>
-                <button class="dialog-btn">${CONFIG.notice_button_text}</button>
-            </div>
-        `;
-        document.body.appendChild(dialog);
-        
-        dialog.querySelector('.dialog-close').onclick = () => dialog.remove();
-        dialog.querySelector('.dialog-btn').onclick = () => dialog.remove();
-    }
-    
-    function showMaintenanceDialog() {
-        const dialog = document.createElement('div');
-        dialog.className = 'dialog-overlay';
-        dialog.innerHTML = `
-            <div class="dialog-box maintenance-dialog">
-                <h2>🔧 MAINTENANCE MODE</h2>
-                <p>${CONFIG.maintenance_message}</p>
-                <button class="dialog-btn">Close</button>
-            </div>
-        `;
-        document.body.appendChild(dialog);
-        
-        mainContent.style.opacity = '0.5';
-        mainContent.style.pointerEvents = 'none';
-        
-        dialog.querySelector('.dialog-btn').onclick = () => {
-            tg.close();
-        };
-    }
-    
-    // ========== APP FUNCTIONS ==========
     function updateUI() {
         if (ad1Done) {
-            const btn = document.getElementById('ad1Btn');
-            btn.classList.add('completed');
-            btn.querySelector('.title').textContent = 'AD 1 COMPLETED ✓';
+            ad1Btn.classList.add('completed');
+            ad1Btn.querySelector('.title').textContent = '✅ AD 1 COMPLETED ✅';
+            ad1Btn.querySelector('.loading-spinner').style.display = 'none';
         }
         if (ad2Done) {
-            const btn = document.getElementById('ad2Btn');
-            btn.classList.add('completed');
-            btn.querySelector('.title').textContent = 'AD 2 COMPLETED ✓';
+            ad2Btn.classList.add('completed');
+            ad2Btn.querySelector('.title').textContent = '✅ AD 2 COMPLETED ✅';
+            ad2Btn.querySelector('.loading-spinner').style.display = 'none';
         }
         
         if ((adCount === 1 && ad1Done) || (adCount === 2 && ad1Done && ad2Done)) {
-            const unlockBtn = document.getElementById('unlockBtn');
-            const statusMsg = document.getElementById('statusMsg');
             unlockBtn.classList.add('active');
             unlockBtn.querySelector('.title').innerHTML = '🎉 GET CONTENT 🎉';
             unlockBtn.querySelector('.sub').textContent = 'Click to unlock now!';
@@ -513,118 +375,123 @@
         }
     }
     
-    function openAd(adNum) {
-        const link = adNum === 1 ? AD_LINK_1 : AD_LINK_2;
-        tg.openLink(link);
-        tg.showAlert(`📢 After watching AD ${adNum}, come back and tap the same button to confirm.`);
-    }
-    
-    function completeAd(adNum) {
-        if (adNum === 1 && !ad1Done) {
-            ad1Done = true;
-            tg.sendData(JSON.stringify({action: 'ad_complete', content_id: contentId, ad_num: 1}));
-            tg.showAlert('✅ AD 1 completed! Now complete AD 2.');
-            updateUI();
-        } else if (adNum === 2 && !ad2Done) {
-            ad2Done = true;
-            tg.sendData(JSON.stringify({action: 'ad_complete', content_id: contentId, ad_num: 2}));
-            tg.showAlert('✅ AD 2 completed! Click GET CONTENT to unlock.');
-            updateUI();
+    async function showRewardedAd(adNum, contentId) {
+        if (!showAd) {
+            console.log('Monetag SDK not loaded, using fallback');
+            // Fallback: open link in browser
+            const link = adNum === 1 ? AD_LINK_1 : AD_LINK_2;
+            tg.openLink(link);
+            tg.showAlert(`📢 After watching AD ${adNum}, come back and click again to confirm.`);
+            return false;
+        }
+        
+        // Show loading on button
+        const btn = adNum === 1 ? ad1Btn : ad2Btn;
+        btn.style.opacity = '0.7';
+        btn.querySelector('.loading-spinner').style.display = 'block';
+        
+        try {
+            // Show Monetag rewarded interstitial ad
+            const result = await showAd({
+                type: 'end',  // Rewarded Interstitial
+                ymid: `${contentId}_ad${adNum}`,  // Unique ID for tracking
+                requestVar: `unlock_ad${adNum}`
+            });
+            
+            btn.style.opacity = '1';
+            btn.querySelector('.loading-spinner').style.display = 'none';
+            
+            // Check if user watched the full ad
+            if (result && result.reward_event_type === 'valued') {
+                console.log(`✅ Ad ${adNum} completed! Reward given.`);
+                return true;
+            } else {
+                console.log(`Ad ${adNum} not fully watched`);
+                showToast(`⚠️ Please watch AD ${adNum} completely`);
+                return false;
+            }
+        } catch (error) {
+            console.error('Ad error:', error);
+            btn.style.opacity = '1';
+            btn.querySelector('.loading-spinner').style.display = 'none';
+            showToast(`❌ Ad failed. Please try again.`);
+            return false;
         }
     }
     
-    function getContent() {
-        if ((adCount === 1 && !ad1Done) || (adCount === 2 && (!ad1Done || !ad2Done))) {
-            tg.showAlert('❌ Complete both ads first!');
+    async function handleAdClick(adNum) {
+        if (adNum === 1 && ad1Done) {
+            showToast('✅ AD 1 already completed!');
             return;
         }
-        document.getElementById('loading').style.display = 'block';
+        if (adNum === 2 && ad2Done) {
+            showToast('✅ AD 2 already completed!');
+            return;
+        }
+        
+        if (loadingAd) {
+            showToast('⏳ Please wait, ad is loading...');
+            return;
+        }
+        
+        loadingAd = true;
+        
+        // Show ad and wait for completion
+        const completed = await showRewardedAd(adNum, contentId);
+        
+        if (completed) {
+            if (adNum === 1) {
+                ad1Done = true;
+                tg.sendData(JSON.stringify({action: 'ad_complete', content_id: contentId, ad_num: 1}));
+                showToast('✅ AD 1 completed! Now watch AD 2.');
+            } else {
+                ad2Done = true;
+                tg.sendData(JSON.stringify({action: 'ad_complete', content_id: contentId, ad_num: 2}));
+                showToast('✅ AD 2 completed! Click GET CONTENT to unlock.');
+            }
+            updateUI();
+        }
+        
+        loadingAd = false;
+    }
+    
+    async function getContent() {
+        if ((adCount === 1 && !ad1Done) || (adCount === 2 && (!ad1Done || !ad2Done))) {
+            showToast('❌ Complete both ads first!');
+            return;
+        }
+        
+        loadingOverlay.classList.remove('hidden');
         tg.sendData(JSON.stringify({action: 'unlock', content_id: contentId}));
+        
+        // Timeout after 10 seconds
+        setTimeout(() => {
+            loadingOverlay.classList.add('hidden');
+        }, 10000);
     }
     
     function openSupport() {
         tg.openLink(SUPPORT_BOT);
     }
     
-    async function init() {
-        // Check maintenance mode
-        if (CONFIG.maintenance === true) {
-            showMaintenanceDialog();
-            return;
-        }
+    // Event listeners
+    ad1Btn.onclick = () => handleAdClick(1);
+    ad2Btn.onclick = () => handleAdClick(2);
+    unlockBtn.onclick = getContent;
+    supportBtn.onclick = openSupport;
+    
+    // Initialize
+    function init() {
+        console.log('Mini App loaded. Content ID:', contentId);
+        console.log('Monetag SDK available:', !!showAd);
         
-        // Show dialogs in sequence (welcome first time only)
-        if (!localStorage.getItem('welcome_shown')) {
-            showWelcomeDialog();
-            localStorage.setItem('welcome_shown', 'true');
-        }
-        
-        // Show join dialog after a short delay (only once)
-        if (CONFIG.show_join_dialog && !localStorage.getItem('join_dialog_shown')) {
-            setTimeout(() => {
-                if (!document.querySelector('.dialog-overlay')) {
-                    showJoinDialog();
-                    localStorage.setItem('join_dialog_shown', 'true');
-                }
-            }, 500);
-        }
-        
-        // Show notice dialog after join dialog (only once per session)
-        if (CONFIG.show_notice && sessionStorage.getItem('notice_shown') !== 'true') {
-            setTimeout(() => {
-                if (!document.querySelector('.dialog-overlay')) {
-                    showNoticeDialog();
-                    sessionStorage.setItem('notice_shown', 'true');
-                }
-            }, 1000);
-        }
-        
-        document.getElementById('ad1Btn').onclick = () => {
-            if (ad1Done) {
-                tg.showAlert('✅ AD 1 already completed!');
-                return;
-            }
-            tg.showPopup({
-                title: 'AD 1',
-                message: 'Have you watched AD 1 completely?',
-                buttons: [
-                    {id: 'no', type: 'cancel', text: 'Not yet'},
-                    {id: 'yes', type: 'ok', text: 'Yes, completed!'}
-                ]
-            }, (btnId) => {
-                if (btnId === 'yes') completeAd(1);
-                else openAd(1);
-            });
-        };
-        
-        document.getElementById('ad2Btn').onclick = () => {
-            if (ad2Done) {
-                tg.showAlert('✅ AD 2 already completed!');
-                return;
-            }
-            tg.showPopup({
-                title: 'AD 2',
-                message: 'Have you watched AD 2 completely?',
-                buttons: [
-                    {id: 'no', type: 'cancel', text: 'Not yet'},
-                    {id: 'yes', type: 'ok', text: 'Yes, completed!'}
-                ]
-            }, (btnId) => {
-                if (btnId === 'yes') completeAd(2);
-                else openAd(2);
-            });
-        };
-        
-        document.getElementById('unlockBtn').onclick = getContent;
-        document.getElementById('supportBtn').onclick = openSupport;
-        
-        if (contentId) {
-            tg.sendData(JSON.stringify({action: 'load_progress', content_id: contentId}));
+        if (!showAd) {
+            console.warn('Monetag SDK not loaded, using fallback mode');
+            showToast('⚠️ Using fallback mode. You will need to confirm ads manually.');
         }
     }
     
     init();
-    console.log('Mini App loaded. Content ID:', contentId);
 </script>
 </body>
 </html>
