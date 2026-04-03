@@ -6,21 +6,14 @@
     <title>Unlock Gateway</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src='//libtl.com/sdk.js' data-zone='10824531' data-sdk='show_10824531'></script>
-
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0f;
-            min-height: 100vh;
-            color: #ffffff;
-            padding: 20px;
+            background: #0a0a0f; min-height: 100vh; color: #fff; padding: 20px;
         }
-
         .container { max-width: 500px; margin: 0 auto; padding: 20px 0 40px; }
-
-        .header { text-align: center; margin-bottom: 40px; }
+        .header { text-align: center; margin-bottom: 30px; }
         .header h1 {
             font-size: 26px; font-weight: 700;
             background: linear-gradient(135deg, #ff4d4d, #ff6b6b);
@@ -28,96 +21,99 @@
             margin-bottom: 8px;
         }
         .header p { font-size: 14px; color: #888; }
-
-        .ad-btn {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            border: 1px solid rgba(255, 77, 77, 0.3);
-            border-radius: 16px; padding: 18px 20px; margin-bottom: 16px;
-            width: 100%; text-align: center; cursor: pointer;
-            transition: all 0.2s ease; position: relative;
-        }
-        .ad-btn:active { transform: scale(0.97); }
-        .ad-btn.disabled { opacity: 0.6; cursor: not-allowed; pointer-events: none; }
-        .ad-btn.completed {
-            background: linear-gradient(135deg, #0f3b2a, #1a4a35);
-            border-color: rgba(56, 239, 125, 0.5);
-            pointer-events: none;
-        }
-        .ad-btn .emoji { font-size: 24px; display: block; margin-bottom: 8px; }
-        .ad-btn .title { font-size: 18px; font-weight: 600; color: #fff; }
-        .ad-btn .sub { font-size: 12px; color: #aaa; margin-top: 4px; }
-        .ad-btn .loading-spinner {
-            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
-            width: 24px; height: 24px;
-            border: 2px solid rgba(255,255,255,0.3); border-top-color: #ff4d4d;
-            border-radius: 50%; animation: spin 0.6s linear infinite; display: none;
-        }
-
-        @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
-
-        .unlock-btn {
-            background: #2a2a3a; border: none; border-radius: 16px;
-            padding: 20px; width: 100%; text-align: center;
-            cursor: not-allowed; transition: all 0.2s ease; margin-top: 8px; opacity: 0.5;
-        }
-        .unlock-btn.active {
-            background: linear-gradient(135deg, #11998e, #38ef7d);
-            cursor: pointer; opacity: 1;
-        }
-        .unlock-btn.active:active { transform: scale(0.97); }
-        .unlock-btn .title { font-size: 20px; font-weight: 700; color: #fff; }
-        .unlock-btn .sub { font-size: 12px; color: rgba(255,255,255,0.8); margin-top: 4px; }
-
-        .status {
-            text-align: center; margin-top: 24px; padding: 12px;
-            border-radius: 12px; font-size: 13px;
-            background: rgba(255, 77, 77, 0.1); color: #ff6b6b;
-        }
-        .status.ready { background: rgba(56, 239, 125, 0.1); color: #38ef7d; }
-
-        .toast {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.9); color: #38ef7d;
-            padding: 12px 20px; border-radius: 40px; font-size: 14px;
-            z-index: 1000; pointer-events: none;
-            animation: fadeOut 2.5s ease forwards;
-        }
-        @keyframes fadeOut {
-            0% { opacity: 1; bottom: 30px; }
-            70% { opacity: 1; bottom: 30px; }
-            100% { opacity: 0; bottom: 50px; visibility: hidden; }
-        }
-
-        .support-btn {
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 40px; padding: 12px 20px; width: 100%;
-            text-align: center; cursor: pointer; transition: all 0.2s ease; margin-top: 30px;
-        }
-        .support-btn:active { transform: scale(0.97); background: rgba(255,255,255,0.1); }
-        .support-btn .title { font-size: 14px; color: #aaa; }
-        .support-btn .title b { color: #ff6b6b; }
-
-        .footer {
-            text-align: center; margin-top: 20px; padding-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            font-size: 10px; color: #444;
-        }
-
         .disclaimer {
             background: rgba(0,0,0,0.5); border-radius: 12px; padding: 12px;
             margin-bottom: 20px; font-size: 11px; color: #888;
             text-align: center; border: 1px solid rgba(255,255,255,0.05);
         }
-
-        .loading-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8); display: flex;
-            align-items: center; justify-content: center;
-            z-index: 1000; backdrop-filter: blur(5px);
+        .ad-btn {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 1px solid rgba(255,77,77,0.3);
+            border-radius: 16px; padding: 18px 20px; margin-bottom: 16px;
+            width: 100%; text-align: center; cursor: pointer;
+            transition: all 0.2s ease; position: relative;
+            -webkit-user-select: none; user-select: none;
         }
-        .loading-spinner-large {
+        .ad-btn:active { transform: scale(0.97); }
+        .ad-btn.disabled { opacity: 0.5; pointer-events: none; }
+        .ad-btn.completed {
+            background: linear-gradient(135deg, #0f3b2a, #1a4a35);
+            border-color: rgba(56,239,125,0.5); pointer-events: none;
+        }
+        .ad-btn .emoji { font-size: 24px; display: block; margin-bottom: 8px; }
+        .ad-btn .label { font-size: 18px; font-weight: 600; color: #fff; }
+        .ad-btn .sub { font-size: 12px; color: #aaa; margin-top: 4px; }
+        .spinner {
+            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+            width: 24px; height: 24px;
+            border: 2px solid rgba(255,255,255,0.3); border-top-color: #ff4d4d;
+            border-radius: 50%; animation: spin 0.6s linear infinite; display: none;
+        }
+        @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+
+        /* UNLOCK BUTTON — important fix */
+        .unlock-wrap {
+            margin-top: 8px;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .unlock-btn {
+            background: #2a2a3a;
+            border: none; border-radius: 16px;
+            padding: 22px 20px; width: 100%; text-align: center;
+            opacity: 0.4; transition: all 0.3s ease;
+            display: block;
+            -webkit-user-select: none; user-select: none;
+            touch-action: manipulation;
+        }
+        .unlock-btn.active {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            opacity: 1; cursor: pointer;
+        }
+        .unlock-btn.active:active { transform: scale(0.97); }
+        .unlock-btn .label { font-size: 20px; font-weight: 700; color: #fff; }
+        .unlock-btn .sub { font-size: 12px; color: rgba(255,255,255,0.8); margin-top: 4px; }
+
+        .status {
+            text-align: center; margin-top: 20px; padding: 12px;
+            border-radius: 12px; font-size: 13px;
+            background: rgba(255,77,77,0.1); color: #ff6b6b;
+        }
+        .status.ready { background: rgba(56,239,125,0.1); color: #38ef7d; }
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.9); color: #38ef7d;
+            padding: 12px 24px; border-radius: 40px; font-size: 14px;
+            z-index: 9999; pointer-events: none;
+            animation: fadeOut 2.5s ease forwards;
+        }
+        @keyframes fadeOut {
+            0%,70% { opacity:1; bottom:30px; }
+            100% { opacity:0; bottom:50px; }
+        }
+        .support-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 40px; padding: 12px 20px; width: 100%;
+            text-align: center; cursor: pointer; margin-top: 30px;
+            touch-action: manipulation;
+        }
+        .support-btn:active { background: rgba(255,255,255,0.1); }
+        .support-btn span { font-size: 14px; color: #aaa; }
+        .support-btn b { color: #ff6b6b; }
+        .footer {
+            text-align: center; margin-top: 20px; padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            font-size: 10px; color: #444;
+        }
+        .loading-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.85); display: flex;
+            align-items: center; justify-content: center;
+            z-index: 9998; backdrop-filter: blur(5px);
+        }
+        .big-spinner {
             width: 50px; height: 50px;
-            border: 3px solid rgba(255,255,255,0.3); border-top-color: #ff4d4d;
+            border: 3px solid rgba(255,255,255,0.2); border-top-color: #ff4d4d;
             border-radius: 50%; animation: spin2 0.8s linear infinite;
         }
         @keyframes spin2 { to { transform: rotate(360deg); } }
@@ -126,47 +122,45 @@
 </head>
 <body>
 
-<div id="mainContent">
-    <div class="container">
-        <div class="disclaimer">⚠️ 18+ Only | Watch ads to unlock content</div>
+<div class="container">
+    <div class="disclaimer">⚠️ 18+ Only | Watch ads to unlock content</div>
+    <div class="header">
+        <h1>🔞 UNLOCK GATEWAY</h1>
+        <p>Complete both ads to get your content</p>
+    </div>
 
-        <div class="header">
-            <h1>🔞 UNLOCK GATEWAY</h1>
-            <p>Complete both ads to get your content</p>
-        </div>
+    <div class="ad-btn" id="ad1Btn" onclick="handleAdClick(1)">
+        <span class="emoji">🎬</span>
+        <div class="label">WATCH AD 1</div>
+        <div class="sub">~10 seconds • required</div>
+        <div class="spinner" id="spinner1"></div>
+    </div>
 
-        <div class="ad-btn" id="ad1Btn">
-            <div class="emoji">🎬</div>
-            <div class="title">WATCH AD 1</div>
-            <div class="sub">~10 seconds • required</div>
-            <div class="loading-spinner" id="spinner1"></div>
-        </div>
+    <div class="ad-btn disabled" id="ad2Btn" onclick="handleAdClick(2)">
+        <span class="emoji">🎬</span>
+        <div class="label">WATCH AD 2</div>
+        <div class="sub">Complete Ad 1 first</div>
+        <div class="spinner" id="spinner2"></div>
+    </div>
 
-        <!-- Ad2 pehle disabled rahega -->
-        <div class="ad-btn disabled" id="ad2Btn">
-            <div class="emoji">🎬</div>
-            <div class="title">WATCH AD 2</div>
-            <div class="sub">Complete Ad 1 first</div>
-            <div class="loading-spinner" id="spinner2"></div>
-        </div>
-
-        <div class="unlock-btn" id="unlockBtn">
-            <div class="title">🔒 GET CONTENT</div>
+    <div class="unlock-wrap">
+        <div class="unlock-btn" id="unlockBtn" onclick="getContent()">
+            <div class="label">🔒 GET CONTENT</div>
             <div class="sub">Complete both ads first</div>
         </div>
-
-        <div class="status" id="statusMsg">⚠️ Complete both ads to unlock</div>
-
-        <div class="support-btn" id="supportBtn">
-            <div class="title">❓ Having issues? <b>Contact Support</b> ❓</div>
-        </div>
-
-        <div class="footer"><p>🔞 18+ Only | Ads support free content</p></div>
     </div>
+
+    <div class="status" id="statusMsg">⚠️ Complete both ads to unlock</div>
+
+    <div class="support-btn" onclick="tg.openLink(SUPPORT_BOT)">
+        <span>❓ Having issues? <b>Contact Support</b> ❓</span>
+    </div>
+
+    <div class="footer"><p>🔞 18+ Only | Ads support free content</p></div>
 </div>
 
 <div id="loadingOverlay" class="loading-overlay hidden">
-    <div class="loading-spinner-large"></div>
+    <div class="big-spinner"></div>
 </div>
 
 <script>
@@ -177,14 +171,12 @@
     const urlParams = new URLSearchParams(window.location.search);
     const contentId = urlParams.get('start');
 
-    let ad1Done = false;
-    let ad2Done = false;
-    let loadingAd = false;
-
+    const SUPPORT_BOT = "https://t.me/SinAccessHelpBot";
     const ZONE_ID = '10824531';
     const AD_LINK_1 = "https://developdomicile.com/gig652rgki?key=42f8ca7472c359fa65553c60ec6d14ca";
     const AD_LINK_2 = "https://developdomicile.com/g6f829ibdp?key=b4c0bd42b66bdffb9a35ea29aa3d2540";
-    const SUPPORT_BOT = "https://t.me/SinAccessHelpBot";
+
+    let ad1Done = false, ad2Done = false, loadingAd = false;
 
     const ad1Btn = document.getElementById('ad1Btn');
     const ad2Btn = document.getElementById('ad2Btn');
@@ -193,145 +185,135 @@
     const loadingOverlay = document.getElementById('loadingOverlay');
 
     function showToast(msg) {
-        // Purane toast remove karo
         document.querySelectorAll('.toast').forEach(t => t.remove());
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.textContent = msg;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 2600);
+        const t = document.createElement('div');
+        t.className = 'toast';
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 2600);
     }
 
     function updateUI() {
         if (ad1Done) {
             ad1Btn.classList.add('completed');
-            ad1Btn.querySelector('.title').textContent = '✅ AD 1 COMPLETED';
+            ad1Btn.querySelector('.label').textContent = '✅ AD 1 COMPLETED';
             ad1Btn.querySelector('.sub').textContent = 'Done!';
-            // Ad2 unlock karo
             ad2Btn.classList.remove('disabled');
             ad2Btn.querySelector('.sub').textContent = '~10 seconds • required';
         }
         if (ad2Done) {
             ad2Btn.classList.add('completed');
-            ad2Btn.querySelector('.title').textContent = '✅ AD 2 COMPLETED';
+            ad2Btn.querySelector('.label').textContent = '✅ AD 2 COMPLETED';
             ad2Btn.querySelector('.sub').textContent = 'Done!';
         }
         if (ad1Done && ad2Done) {
+            // Unlock button active karo
             unlockBtn.classList.add('active');
-            unlockBtn.querySelector('.title').innerHTML = '🎉 GET CONTENT 🎉';
-            unlockBtn.querySelector('.sub').textContent = 'Click to unlock now!';
+            unlockBtn.querySelector('.label').textContent = '🎉 GET CONTENT 🎉';
+            unlockBtn.querySelector('.sub').textContent = 'Tap to unlock now!';
             statusMsg.className = 'status ready';
-            statusMsg.innerHTML = '✅ Ready! Click GET CONTENT to unlock ✅';
+            statusMsg.textContent = '✅ Ready! Tap GET CONTENT to unlock';
+
+            // Telegram MainButton bhi show karo as backup
+            tg.MainButton.setText('🎉 GET CONTENT');
+            tg.MainButton.color = '#38ef7d';
+            tg.MainButton.textColor = '#000000';
+            tg.MainButton.show();
+            tg.MainButton.onClick(sendUnlock);
         }
     }
 
-    // FIX: Ad complete hone pe sendData NAHI karte (app band ho jaati thi)
-    // Sirf local state track karte hain, unlock pe ek baar sendData
+    function markAdDone(adNum) {
+        if (adNum === 1) { ad1Done = true; showToast('✅ AD 1 done! Now watch AD 2.'); }
+        else { ad2Done = true; showToast('✅ AD 2 done! Tap GET CONTENT.'); }
+        updateUI();
+    }
+
     async function handleAdClick(adNum) {
-        if (adNum === 1 && ad1Done) { showToast('✅ AD 1 already completed!'); return; }
-        if (adNum === 2 && ad2Done) { showToast('✅ AD 2 already completed!'); return; }
+        if (adNum === 1 && ad1Done) { showToast('✅ AD 1 already done!'); return; }
+        if (adNum === 2 && ad2Done) { showToast('✅ AD 2 already done!'); return; }
         if (adNum === 2 && !ad1Done) { showToast('❌ Complete Ad 1 first!'); return; }
         if (loadingAd) { showToast('⏳ Please wait...'); return; }
 
         loadingAd = true;
         const btn = adNum === 1 ? ad1Btn : ad2Btn;
-        const spinner = document.getElementById(`spinner${adNum}`);
-
-        const showAd = window[`show_${ZONE_ID}`];
+        const spinner = document.getElementById('spinner' + adNum);
+        const showAd = window['show_' + ZONE_ID];
 
         if (showAd) {
-            // Monetag SDK available — rewarded ad show karo
             btn.style.opacity = '0.7';
             spinner.style.display = 'block';
-
             try {
                 const result = await showAd({
                     type: 'end',
-                    ymid: `${contentId}_ad${adNum}`,
-                    requestVar: `unlock_ad${adNum}`
+                    ymid: contentId + '_ad' + adNum,
+                    requestVar: 'unlock_ad' + adNum
                 });
-
                 btn.style.opacity = '1';
                 spinner.style.display = 'none';
-
                 if (result && result.reward_event_type === 'valued') {
                     markAdDone(adNum);
                 } else {
-                    showToast(`⚠️ Watch AD ${adNum} completely!`);
+                    showToast('⚠️ Watch the full ad!');
                 }
-            } catch (e) {
+            } catch(e) {
                 btn.style.opacity = '1';
                 spinner.style.display = 'none';
                 showToast('❌ Ad failed. Try again.');
             }
         } else {
-            // Fallback — link open karo, phir confirm karo
-            const link = adNum === 1 ? AD_LINK_1 : AD_LINK_2;
-            tg.openLink(link);
-
-            // 3 second baad confirm popup dikhao
+            // Fallback
+            tg.openLink(adNum === 1 ? AD_LINK_1 : AD_LINK_2);
             setTimeout(() => {
-                tg.showConfirm(
-                    `✅ Did you watch Ad ${adNum} completely?`,
-                    (confirmed) => {
-                        if (confirmed) {
-                            markAdDone(adNum);
-                        } else {
-                            showToast('⚠️ Please watch the full ad first!');
-                        }
-                        loadingAd = false;
-                    }
-                );
+                tg.showConfirm('Did you watch Ad ' + adNum + ' completely?', (ok) => {
+                    if (ok) markAdDone(adNum);
+                    else showToast('⚠️ Watch the full ad first!');
+                    loadingAd = false;
+                });
             }, 3000);
-            return; // loadingAd callback mein reset hoga
+            return;
         }
-
         loadingAd = false;
     }
 
-    function markAdDone(adNum) {
-        if (adNum === 1) {
-            ad1Done = true;
-            showToast('✅ AD 1 done! Now watch AD 2.');
-        } else {
-            ad2Done = true;
-            showToast('✅ AD 2 done! Click GET CONTENT.');
-        }
-        updateUI();
-    }
-
-    // FIX: Sirf unlock pe ek sendData — app yahan close hogi, jo sahi hai
-    function getContent() {
+    // Main send function — used by both button and MainButton
+    function sendUnlock() {
         if (!ad1Done || !ad2Done) {
             showToast('❌ Complete both ads first!');
             return;
         }
         loadingOverlay.classList.remove('hidden');
+        tg.MainButton.hide();
 
-        // Bot ko ek hi baar data bhejo with both ads confirmed
-        tg.sendData(JSON.stringify({
+        const payload = JSON.stringify({
             action: 'unlock',
             content_id: contentId,
             ad1_done: true,
             ad2_done: true
-        }));
+        });
+
+        try {
+            tg.sendData(payload);
+        } catch(e) {
+            loadingOverlay.classList.add('hidden');
+            showToast('❌ Failed to send. Try again.');
+        }
     }
 
-    // Event listeners
-    ad1Btn.addEventListener('click', () => handleAdClick(1));
-    ad2Btn.addEventListener('click', () => handleAdClick(2));
-    unlockBtn.addEventListener('click', getContent);
-    document.getElementById('supportBtn').addEventListener('click', () => tg.openLink(SUPPORT_BOT));
-
-    // Init check
-    (function init() {
-        if (!contentId) {
-            statusMsg.textContent = '❌ Invalid link! Please use the bot link.';
-            statusMsg.style.color = '#ff4d4d';
+    // GET CONTENT button click
+    function getContent() {
+        if (!unlockBtn.classList.contains('active')) {
+            showToast('❌ Complete both ads first!');
+            return;
         }
-        const sdkAvailable = !!window[`show_${ZONE_ID}`];
-        console.log('Content ID:', contentId, '| Monetag SDK:', sdkAvailable);
-    })();
+        sendUnlock();
+    }
+
+    // Init
+    if (!contentId) {
+        statusMsg.textContent = '❌ Invalid link! Use the bot link.';
+        statusMsg.style.color = '#ff4d4d';
+    }
 </script>
 </body>
 </html>
