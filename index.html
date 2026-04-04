@@ -32,7 +32,6 @@
             border-radius: 16px; padding: 18px 20px; margin-bottom: 16px;
             width: 100%; text-align: center; cursor: pointer;
             transition: all 0.2s ease; position: relative;
-            -webkit-user-select: none; user-select: none;
             touch-action: manipulation;
         }
         .ad-btn:active { transform: scale(0.97); }
@@ -55,9 +54,7 @@
             background: #2a2a3a; border: none; border-radius: 16px;
             padding: 22px 20px; width: 100%; text-align: center;
             opacity: 0.4; transition: all 0.3s ease; display: block;
-            margin-top: 8px;
-            -webkit-user-select: none; user-select: none;
-            touch-action: manipulation;
+            margin-top: 8px; touch-action: manipulation;
         }
         .unlock-btn.active {
             background: linear-gradient(135deg, #11998e, #38ef7d);
@@ -72,6 +69,49 @@
             background: rgba(255,77,77,0.1); color: #ff6b6b;
         }
         .status.ready { background: rgba(56,239,125,0.1); color: #38ef7d; }
+
+        /* KEY SCREEN */
+        .key-screen {
+            text-align: center; padding: 20px 0;
+        }
+        .key-screen h2 {
+            font-size: 22px; font-weight: 700; margin-bottom: 8px;
+            background: linear-gradient(135deg, #ff4d4d, #ff6b6b);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .key-screen p { font-size: 13px; color: #888; margin-bottom: 24px; }
+        .key-box {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 2px solid rgba(56,239,125,0.5);
+            border-radius: 20px; padding: 24px 20px; margin-bottom: 20px;
+            position: relative;
+        }
+        .key-value {
+            font-size: 48px; font-weight: 800; letter-spacing: 12px;
+            color: #38ef7d; font-family: monospace;
+            margin-bottom: 12px;
+        }
+        .copy-btn {
+            background: rgba(56,239,125,0.15); border: 1px solid rgba(56,239,125,0.4);
+            border-radius: 40px; padding: 10px 24px; cursor: pointer;
+            font-size: 14px; color: #38ef7d; touch-action: manipulation;
+            display: inline-block; transition: all 0.2s;
+        }
+        .copy-btn:active { transform: scale(0.95); background: rgba(56,239,125,0.3); }
+        .key-instruction {
+            background: rgba(255,255,255,0.05); border-radius: 16px;
+            padding: 16px; margin-bottom: 20px; font-size: 13px; color: #aaa;
+            line-height: 1.6;
+        }
+        .key-instruction b { color: #fff; }
+        .close-btn {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            border: none; border-radius: 16px; padding: 18px 20px;
+            width: 100%; font-size: 18px; font-weight: 700; color: #000;
+            cursor: pointer; touch-action: manipulation;
+        }
+        .close-btn:active { transform: scale(0.97); }
+
         .toast {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
             background: rgba(0,0,0,0.9); color: #38ef7d;
@@ -86,7 +126,7 @@
         .support-btn {
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
             border-radius: 40px; padding: 12px 20px; width: 100%;
-            text-align: center; cursor: pointer; margin-top: 30px;
+            text-align: center; cursor: pointer; margin-top: 20px;
             touch-action: manipulation;
         }
         .support-btn:active { background: rgba(255,255,255,0.1); }
@@ -103,27 +143,25 @@
             align-items: center; justify-content: center;
             z-index: 9998; backdrop-filter: blur(5px);
         }
-        .loading-overlay p {
-            color: #fff; margin-top: 20px; font-size: 14px;
-        }
         .loading-wrap { text-align: center; }
         .big-spinner {
             width: 50px; height: 50px;
             border: 3px solid rgba(255,255,255,0.2); border-top-color: #ff4d4d;
-            border-radius: 50%; animation: spin2 0.8s linear infinite;
-            margin: 0 auto;
+            border-radius: 50%; animation: spin2 0.8s linear infinite; margin: 0 auto;
         }
         @keyframes spin2 { to { transform: rotate(360deg); } }
+        .loading-wrap p { color: #fff; margin-top: 16px; font-size: 14px; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<div class="container">
+<!-- AD SCREEN -->
+<div id="adScreen" class="container">
     <div class="disclaimer">⚠️ 18+ Only | Watch ads to unlock content</div>
     <div class="header">
         <h1>🔞 UNLOCK GATEWAY</h1>
-        <p>Complete both ads to get your content</p>
+        <p>Complete both ads to get your key</p>
     </div>
 
     <div class="ad-btn" id="ad1Btn" onclick="handleAdClick(1)">
@@ -140,24 +178,50 @@
         <div class="spinner" id="spinner2"></div>
     </div>
 
-    <div class="unlock-btn" id="unlockBtn" onclick="getContent()">
-        <div class="label">🔒 GET CONTENT</div>
+    <div class="unlock-btn" id="unlockBtn" onclick="getKey()">
+        <div class="label">🔑 GET YOUR KEY</div>
         <div class="sub">Complete both ads first</div>
     </div>
 
-    <div class="status" id="statusMsg">⚠️ Complete both ads to unlock</div>
+    <div class="status" id="statusMsg">⚠️ Complete both ads to get key</div>
 
     <div class="support-btn" onclick="tg.openLink('https://t.me/SinAccessHelpBot')">
         <span>❓ Having issues? <b>Contact Support</b> ❓</span>
     </div>
-
     <div class="footer"><p>🔞 18+ Only | Ads support free content</p></div>
+</div>
+
+<!-- KEY SCREEN -->
+<div id="keyScreen" class="container hidden">
+    <div class="key-screen">
+        <h2>🔑 YOUR UNLOCK KEY</h2>
+        <p>Use this key in the bot to get your content</p>
+
+        <div class="key-box">
+            <div class="key-value" id="keyValue">----</div>
+            <div class="copy-btn" onclick="copyKey()">📋 Copy Key</div>
+        </div>
+
+        <div class="key-instruction">
+            <b>How to use:</b><br>
+            1. Go back to the bot<br>
+            2. The bot has sent you a keypad<br>
+            3. Enter this 4-digit key using the buttons<br>
+            4. Your content will be unlocked! 🎉
+        </div>
+
+        <button class="close-btn" onclick="tg.close()">✅ Go to Bot</button>
+
+        <div class="support-btn" onclick="tg.openLink('https://t.me/SinAccessHelpBot')">
+            <span>❓ Having issues? <b>Contact Support</b> ❓</span>
+        </div>
+    </div>
 </div>
 
 <div id="loadingOverlay" class="loading-overlay hidden">
     <div class="loading-wrap">
         <div class="big-spinner"></div>
-        <p>Unlocking your content...</p>
+        <p>Generating your key...</p>
     </div>
 </div>
 
@@ -176,47 +240,43 @@
     const AD_LINK_2 = "https://developdomicile.com/g6f829ibdp?key=b4c0bd42b66bdffb9a35ea29aa3d2540";
 
     let ad1Done = false, ad2Done = false, loadingAd = false;
-
-    const ad1Btn = document.getElementById('ad1Btn');
-    const ad2Btn = document.getElementById('ad2Btn');
-    const unlockBtn = document.getElementById('unlockBtn');
-    const statusMsg = document.getElementById('statusMsg');
-    const loadingOverlay = document.getElementById('loadingOverlay');
+    let generatedKey = '';
 
     function showToast(msg) {
         document.querySelectorAll('.toast').forEach(t => t.remove());
         const t = document.createElement('div');
-        t.className = 'toast';
-        t.textContent = msg;
+        t.className = 'toast'; t.textContent = msg;
         document.body.appendChild(t);
         setTimeout(() => t.remove(), 2600);
     }
 
     function updateUI() {
         if (ad1Done) {
-            ad1Btn.classList.add('completed');
-            ad1Btn.querySelector('.label').textContent = '✅ AD 1 COMPLETED';
-            ad1Btn.querySelector('.sub').textContent = 'Done!';
-            ad2Btn.classList.remove('disabled');
-            ad2Btn.querySelector('.sub').textContent = '~10 seconds • required';
+            document.getElementById('ad1Btn').classList.add('completed');
+            document.getElementById('ad1Btn').querySelector('.label').textContent = '✅ AD 1 COMPLETED';
+            document.getElementById('ad1Btn').querySelector('.sub').textContent = 'Done!';
+            document.getElementById('ad2Btn').classList.remove('disabled');
+            document.getElementById('ad2Btn').querySelector('.sub').textContent = '~10 seconds • required';
         }
         if (ad2Done) {
-            ad2Btn.classList.add('completed');
-            ad2Btn.querySelector('.label').textContent = '✅ AD 2 COMPLETED';
-            ad2Btn.querySelector('.sub').textContent = 'Done!';
+            document.getElementById('ad2Btn').classList.add('completed');
+            document.getElementById('ad2Btn').querySelector('.label').textContent = '✅ AD 2 COMPLETED';
+            document.getElementById('ad2Btn').querySelector('.sub').textContent = 'Done!';
         }
         if (ad1Done && ad2Done) {
+            const unlockBtn = document.getElementById('unlockBtn');
             unlockBtn.classList.add('active');
-            unlockBtn.querySelector('.label').textContent = '🎉 GET CONTENT 🎉';
-            unlockBtn.querySelector('.sub').textContent = 'Tap to unlock now!';
+            unlockBtn.querySelector('.label').textContent = '🔑 GET YOUR KEY';
+            unlockBtn.querySelector('.sub').textContent = 'Tap to generate key!';
+            const statusMsg = document.getElementById('statusMsg');
             statusMsg.className = 'status ready';
-            statusMsg.textContent = '✅ Ready! Tap GET CONTENT to unlock';
+            statusMsg.textContent = '✅ Ready! Tap GET YOUR KEY';
         }
     }
 
     function markAdDone(adNum) {
         if (adNum === 1) { ad1Done = true; showToast('✅ AD 1 done! Now watch AD 2.'); }
-        else { ad2Done = true; showToast('✅ AD 2 done! Tap GET CONTENT.'); }
+        else { ad2Done = true; showToast('✅ AD 2 done! Tap GET YOUR KEY.'); }
         updateUI();
     }
 
@@ -227,7 +287,7 @@
         if (loadingAd) { showToast('⏳ Please wait...'); return; }
 
         loadingAd = true;
-        const btn = adNum === 1 ? ad1Btn : ad2Btn;
+        const btn = document.getElementById('ad' + adNum + 'Btn');
         const spinner = document.getElementById('spinner' + adNum);
         const showAd = window['show_' + ZONE_ID];
 
@@ -242,11 +302,8 @@
                 });
                 btn.style.opacity = '1';
                 spinner.style.display = 'none';
-                if (result && result.reward_event_type === 'valued') {
-                    markAdDone(adNum);
-                } else {
-                    showToast('⚠️ Watch the full ad!');
-                }
+                if (result && result.reward_event_type === 'valued') markAdDone(adNum);
+                else showToast('⚠️ Watch the full ad!');
             } catch(e) {
                 btn.style.opacity = '1';
                 spinner.style.display = 'none';
@@ -266,18 +323,11 @@
         loadingAd = false;
     }
 
-    async function getContent() {
-        if (!ad1Done || !ad2Done) {
-            showToast('❌ Complete both ads first!');
-            return;
-        }
+    async function getKey() {
+        if (!ad1Done || !ad2Done) { showToast('❌ Complete both ads first!'); return; }
+        if (!userId) { showToast('❌ Could not get user info. Reopen from bot.'); return; }
 
-        if (!userId) {
-            showToast('❌ Could not get user info. Reopen from bot.');
-            return;
-        }
-
-        loadingOverlay.classList.remove('hidden');
+        document.getElementById('loadingOverlay').classList.remove('hidden');
 
         try {
             const res = await fetch('/api/unlock', {
@@ -293,24 +343,45 @@
             });
 
             const data = await res.json();
+            document.getElementById('loadingOverlay').classList.add('hidden');
 
-            if (data.success) {
-                // Close mini app — content bot mein aa jayega
-                tg.close();
+            if (data.success && data.key) {
+                generatedKey = data.key;
+                document.getElementById('keyValue').textContent = data.key;
+                // Auto copy
+                try {
+                    await navigator.clipboard.writeText(data.key);
+                    showToast('✅ Key copied automatically!');
+                } catch(e) {
+                    // Clipboard nahi mila, user manually copy karega
+                }
+                // Screen switch karo
+                document.getElementById('adScreen').classList.add('hidden');
+                document.getElementById('keyScreen').classList.remove('hidden');
             } else {
-                loadingOverlay.classList.add('hidden');
                 showToast('❌ Error: ' + (data.error || 'Try again'));
             }
         } catch(e) {
-            loadingOverlay.classList.add('hidden');
+            document.getElementById('loadingOverlay').classList.add('hidden');
             showToast('❌ Network error. Try again.');
         }
     }
 
-    // Init check
+    function copyKey() {
+        if (!generatedKey) return;
+        try {
+            navigator.clipboard.writeText(generatedKey).then(() => {
+                showToast('✅ Key copied!');
+            });
+        } catch(e) {
+            // Fallback
+            tg.showAlert('Your key: ' + generatedKey + '\n\nManually copy this key and enter it in the bot.');
+        }
+    }
+
     if (!contentId) {
-        statusMsg.textContent = '❌ Invalid link! Use the bot link.';
-        statusMsg.style.color = '#ff4d4d';
+        document.getElementById('statusMsg').textContent = '❌ Invalid link! Use the bot link.';
+        document.getElementById('statusMsg').style.color = '#ff4d4d';
     }
 </script>
 </body>
