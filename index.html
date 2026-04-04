@@ -207,7 +207,7 @@
             1. Copy your key above<br>
             2. Go back to the bot<br>
             3. Send this message in bot:<br><br>
-            <code style="background:rgba(255,255,255,0.1);padding:8px 12px;border-radius:8px;font-size:15px;color:#38ef7d;">/getkey <span id="keyHint">----</span></code><br><br>
+            <code id="keyCommand" style="background:rgba(255,255,255,0.1);padding:8px 12px;border-radius:8px;font-size:13px;color:#38ef7d;display:block;word-break:break-all;">/getkey ---- ----</code><br>
             4. Your content will be unlocked! 🎉
         </div>
 
@@ -349,7 +349,7 @@
             if (data.success && data.key) {
                 generatedKey = data.key;
                 document.getElementById('keyValue').textContent = data.key;
-                document.getElementById('keyHint').textContent = data.key;
+                document.getElementById('keyCommand').textContent = `/getkey ${data.key} ${contentId}`;
                 // Auto copy
                 try {
                     await navigator.clipboard.writeText(data.key);
@@ -370,14 +370,13 @@
     }
 
     function copyKey() {
-        if (!generatedKey) return;
+        const fullCommand = `/getkey ${generatedKey} ${contentId}`;
         try {
-            navigator.clipboard.writeText(generatedKey).then(() => {
-                showToast('✅ Key copied!');
+            navigator.clipboard.writeText(fullCommand).then(() => {
+                showToast('✅ Command copied!');
             });
         } catch(e) {
-            // Fallback
-            tg.showAlert('Your key: ' + generatedKey + '\n\nManually copy this key and enter it in the bot.');
+            tg.showAlert('Copy this:\n' + fullCommand);
         }
     }
 
