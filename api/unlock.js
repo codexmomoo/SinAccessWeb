@@ -18,21 +18,26 @@ export default async function handler(req, res) {
         // 4 digit unique key generate karo
         const key = String(Math.floor(1000 + Math.random() * 9000));
 
-        // Bot ko message bhejo — key + content_id store karne ke liye
-        // Special format: bot is message ko parse karega
-        const msgRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: user_id,
-                text: `STORE_KEY:${key}:${content_id}`,
-                parse_mode: 'Markdown'
-            })
-        });
+        // Bot ko message bhejo — native fetch use karo (Node 18+ mein built-in hai)
+        const telegramRes = await fetch(
+            `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: user_id,
+                    text: `STORE_KEY:${key}:${content_id}`
+                })
+            }
+        );
 
-        const msgData = await msgRes.json();
-        if (!msgData.ok) {
-            return res.status(500).json({ error: 'Telegram error', detail: msgData });
+        const telegramData = await telegramRes.json();
+
+        if (!telegramData.ok) {
+            return res.status(500).json({ 
+                error: 'Telegram error', 
+                detail: telegramData.description 
+            });
         }
 
         return res.status(200).json({ success: true, key: key });
