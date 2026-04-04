@@ -33,6 +33,7 @@
             width: 100%; text-align: center; cursor: pointer;
             transition: all 0.2s ease; position: relative;
             -webkit-user-select: none; user-select: none;
+            touch-action: manipulation;
         }
         .ad-btn:active { transform: scale(0.97); }
         .ad-btn.disabled { opacity: 0.5; pointer-events: none; }
@@ -50,19 +51,11 @@
             border-radius: 50%; animation: spin 0.6s linear infinite; display: none;
         }
         @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
-
-        /* UNLOCK BUTTON — important fix */
-        .unlock-wrap {
-            margin-top: 8px;
-            border-radius: 16px;
-            overflow: hidden;
-        }
         .unlock-btn {
-            background: #2a2a3a;
-            border: none; border-radius: 16px;
+            background: #2a2a3a; border: none; border-radius: 16px;
             padding: 22px 20px; width: 100%; text-align: center;
-            opacity: 0.4; transition: all 0.3s ease;
-            display: block;
+            opacity: 0.4; transition: all 0.3s ease; display: block;
+            margin-top: 8px;
             -webkit-user-select: none; user-select: none;
             touch-action: manipulation;
         }
@@ -73,7 +66,6 @@
         .unlock-btn.active:active { transform: scale(0.97); }
         .unlock-btn .label { font-size: 20px; font-weight: 700; color: #fff; }
         .unlock-btn .sub { font-size: 12px; color: rgba(255,255,255,0.8); margin-top: 4px; }
-
         .status {
             text-align: center; margin-top: 20px; padding: 12px;
             border-radius: 12px; font-size: 13px;
@@ -111,10 +103,15 @@
             align-items: center; justify-content: center;
             z-index: 9998; backdrop-filter: blur(5px);
         }
+        .loading-overlay p {
+            color: #fff; margin-top: 20px; font-size: 14px;
+        }
+        .loading-wrap { text-align: center; }
         .big-spinner {
             width: 50px; height: 50px;
             border: 3px solid rgba(255,255,255,0.2); border-top-color: #ff4d4d;
             border-radius: 50%; animation: spin2 0.8s linear infinite;
+            margin: 0 auto;
         }
         @keyframes spin2 { to { transform: rotate(360deg); } }
         .hidden { display: none !important; }
@@ -143,16 +140,14 @@
         <div class="spinner" id="spinner2"></div>
     </div>
 
-    <div class="unlock-wrap">
-        <div class="unlock-btn" id="unlockBtn" onclick="getContent()">
-            <div class="label">🔒 GET CONTENT</div>
-            <div class="sub">Complete both ads first</div>
-        </div>
+    <div class="unlock-btn" id="unlockBtn" onclick="getContent()">
+        <div class="label">🔒 GET CONTENT</div>
+        <div class="sub">Complete both ads first</div>
     </div>
 
     <div class="status" id="statusMsg">⚠️ Complete both ads to unlock</div>
 
-    <div class="support-btn" onclick="tg.openLink(SUPPORT_BOT)">
+    <div class="support-btn" onclick="tg.openLink('https://t.me/SinAccessHelpBot')">
         <span>❓ Having issues? <b>Contact Support</b> ❓</span>
     </div>
 
@@ -160,7 +155,10 @@
 </div>
 
 <div id="loadingOverlay" class="loading-overlay hidden">
-    <div class="big-spinner"></div>
+    <div class="loading-wrap">
+        <div class="big-spinner"></div>
+        <p>Unlocking your content...</p>
+    </div>
 </div>
 
 <script>
@@ -170,8 +168,9 @@
 
     const urlParams = new URLSearchParams(window.location.search);
     const contentId = urlParams.get('start');
+    const userId = tg.initDataUnsafe?.user?.id;
+    const initData = tg.initData;
 
-    const SUPPORT_BOT = "https://t.me/SinAccessHelpBot";
     const ZONE_ID = '10824531';
     const AD_LINK_1 = "https://developdomicile.com/gig652rgki?key=42f8ca7472c359fa65553c60ec6d14ca";
     const AD_LINK_2 = "https://developdomicile.com/g6f829ibdp?key=b4c0bd42b66bdffb9a35ea29aa3d2540";
@@ -207,19 +206,11 @@
             ad2Btn.querySelector('.sub').textContent = 'Done!';
         }
         if (ad1Done && ad2Done) {
-            // Unlock button active karo
             unlockBtn.classList.add('active');
             unlockBtn.querySelector('.label').textContent = '🎉 GET CONTENT 🎉';
             unlockBtn.querySelector('.sub').textContent = 'Tap to unlock now!';
             statusMsg.className = 'status ready';
             statusMsg.textContent = '✅ Ready! Tap GET CONTENT to unlock';
-
-            // Telegram MainButton bhi show karo as backup
-            tg.MainButton.setText('🎉 GET CONTENT');
-            tg.MainButton.color = '#38ef7d';
-            tg.MainButton.textColor = '#000000';
-            tg.MainButton.show();
-            tg.MainButton.onClick(sendUnlock);
         }
     }
 
@@ -262,7 +253,6 @@
                 showToast('❌ Ad failed. Try again.');
             }
         } else {
-            // Fallback
             tg.openLink(adNum === 1 ? AD_LINK_1 : AD_LINK_2);
             setTimeout(() => {
                 tg.showConfirm('Did you watch Ad ' + adNum + ' completely?', (ok) => {
@@ -276,40 +266,48 @@
         loadingAd = false;
     }
 
-    // Main send function — used by both button and MainButton
-    function sendUnlock() {
+    async function getContent() {
         if (!ad1Done || !ad2Done) {
             showToast('❌ Complete both ads first!');
             return;
         }
-        loadingOverlay.classList.remove('hidden');
-        tg.MainButton.hide();
 
-        const payload = JSON.stringify({
-            action: 'unlock',
-            content_id: contentId,
-            ad1_done: true,
-            ad2_done: true
-        });
-
-        try {
-            tg.sendData(payload);
-        } catch(e) {
-            loadingOverlay.classList.add('hidden');
-            showToast('❌ Failed to send. Try again.');
-        }
-    }
-
-    // GET CONTENT button click
-    function getContent() {
-        if (!unlockBtn.classList.contains('active')) {
-            showToast('❌ Complete both ads first!');
+        if (!userId) {
+            showToast('❌ Could not get user info. Reopen from bot.');
             return;
         }
-        sendUnlock();
+
+        loadingOverlay.classList.remove('hidden');
+
+        try {
+            const res = await fetch('/api/unlock', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: userId,
+                    content_id: contentId,
+                    ad1_done: true,
+                    ad2_done: true,
+                    init_data: initData
+                })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                // Close mini app — content bot mein aa jayega
+                tg.close();
+            } else {
+                loadingOverlay.classList.add('hidden');
+                showToast('❌ Error: ' + (data.error || 'Try again'));
+            }
+        } catch(e) {
+            loadingOverlay.classList.add('hidden');
+            showToast('❌ Network error. Try again.');
+        }
     }
 
-    // Init
+    // Init check
     if (!contentId) {
         statusMsg.textContent = '❌ Invalid link! Use the bot link.';
         statusMsg.style.color = '#ff4d4d';
