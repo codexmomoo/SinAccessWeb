@@ -203,10 +203,11 @@
         </div>
 
         <div class="key-instruction">
-            <b>How to use:</b><br>
-            1. Go back to the bot<br>
-            2. The bot has sent you a keypad<br>
-            3. Enter this 4-digit key using the buttons<br>
+            <b>How to use:</b><br><br>
+            1. Copy your key above<br>
+            2. Go back to the bot<br>
+            3. Send this message in bot:<br><br>
+            <code style="background:rgba(255,255,255,0.1);padding:8px 12px;border-radius:8px;font-size:15px;color:#38ef7d;">/getkey <span id="keyHint">----</span></code><br><br>
             4. Your content will be unlocked! 🎉
         </div>
 
@@ -348,6 +349,7 @@
             if (data.success && data.key) {
                 generatedKey = data.key;
                 document.getElementById('keyValue').textContent = data.key;
+                document.getElementById('keyHint').textContent = data.key;
                 // Auto copy
                 try {
                     await navigator.clipboard.writeText(data.key);
